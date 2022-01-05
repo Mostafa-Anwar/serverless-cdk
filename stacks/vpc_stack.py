@@ -34,7 +34,7 @@ class VPCStack(core.Stack):
                     cidr_mask=24
                 )
             ],
-            nat_gateways=1
+            nat_gateways=1,
             vpc_name="dev-vpc-cdk"
         )
 
