@@ -14,7 +14,7 @@ class VPCStack(core.Stack):
 
         self.vpc = ec2.Vpc(self, 'devVPC',
             cidr="172.32.0.0/16",
-            max_azs=2,
+            max_azs=99,
             enable_dns_hostnames=True,
             enable_dns_support=True,
             subnet_configuration=[
