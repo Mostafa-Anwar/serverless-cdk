@@ -29,6 +29,19 @@ class SecurityStack(core.Stack):
 
         self.bastion_sg.add_ingress_rule(ec2.Peer.any_ipv4(), ec2.Port.tcp(22), "SSH Access")
 
+
+
+
+        redis_sg = ec2.SecurityGroup(self, 'redissg', 
+            security_group_name='redis-sg',
+            vpc=vpc,
+            description="SG for Redis Cluster",
+            allow_all_outbound=True
+        )
+
+        redis_sg.add_ingress_rule(self.lambda_sg, ec2.Port.tcp(6379), "Access for Lambda functions")
+
+
         lambda_role = iam.Role(self, 'lambdarole',
              assumed_by=iam.ServicePrincipal(service='lambda.amazonaws.com'),
              role_name='lambda-role',
@@ -44,6 +57,13 @@ class SecurityStack(core.Stack):
             )
         )
 
+
+        # Export redis sg id, as Redis construct was only experimental at the time so it doesn't support the auto creation of the exports like the other stacks,
+        # thus the need to create the low level export with CF output class
+        core.CfnOutput(self, 'redis-export',
+            export_name='redis-sg-export',
+            value=redis_sg.security_group_id
+        )
 
 
         #SSM Parameters
